@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 
 import ch.zli.m223.model.Entry;
 import ch.zli.m223.repository.EntryRepository;
@@ -22,5 +23,24 @@ public class EntryService {
 
     public List<Entry> findAll() {
         return entryRepository.listAll();
+    }
+
+    @Transactional
+    public void deleteEntry(Long id) {
+        boolean deleted = entryRepository.deleteById(id);
+        if (!deleted) {
+            throw new NotFoundException("Entry " + id + " nicht gefunden");
+        }
+    }
+
+    @Transactional
+    public Entry updateEntry(Long id, Entry entry) {
+        Entry existing = entryRepository.findById(id);
+        if (existing == null) {
+            throw new NotFoundException("Entry " + id + " nicht gefunden");
+        }
+        existing.setCheckIn(entry.getCheckIn());
+        existing.setCheckOut(entry.getCheckOut());
+        return existing;
     }
 }
