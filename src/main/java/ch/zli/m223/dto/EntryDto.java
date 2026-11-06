@@ -1,6 +1,8 @@
 package ch.zli.m223.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -21,6 +23,12 @@ public class EntryDto {
 
     @NotNull(message = "Check-out ist ein Pflichtfeld")
     public LocalDateTime checkOut;
+
+    // ID der Kategorie, darf null sein
+    public Long categoryId;
+
+    // IDs der Tags, leer = keine Tags
+    public List<Long> tagIds = new ArrayList<>();
 
     @AssertTrue(message = "Check-in muss vor Check-out liegen")
     @JsonIgnore
