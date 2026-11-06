@@ -1,10 +1,12 @@
 package ch.zli.m223.model;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
 @Entity
 public class Entry {
@@ -19,27 +21,31 @@ public class Entry {
   @Column(nullable = false)
   private LocalDateTime checkOut;
 
-  public Long getId() {
-    return id;
-  }
+  // n:1 – viele Entries gehören zu (höchstens) einer Category
+  @ManyToOne
+  @JoinColumn(name = "category_id")
+  private Category category;
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+  // n:m – Entries <-> Tags über die Join-Tabelle entry_tag
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "entry_tag",
+      joinColumns = @JoinColumn(name = "entry_id"),
+      inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  private Set<Tag> tags = new LinkedHashSet<>();
 
-  public LocalDateTime getCheckIn() {
-    return checkIn;
-  }
+  public Long getId() { return id; }
+  public void setId(Long id) { this.id = id; }
 
-  public void setCheckIn(LocalDateTime checkIn) {
-    this.checkIn = checkIn;
-  }
+  public LocalDateTime getCheckIn() { return checkIn; }
+  public void setCheckIn(LocalDateTime checkIn) { this.checkIn = checkIn; }
 
-  public LocalDateTime getCheckOut() {
-    return checkOut;
-  }
+  public LocalDateTime getCheckOut() { return checkOut; }
+  public void setCheckOut(LocalDateTime checkOut) { this.checkOut = checkOut; }
 
-  public void setCheckOut(LocalDateTime checkOut) {
-    this.checkOut = checkOut;
-  }
+  public Category getCategory() { return category; }
+  public void setCategory(Category category) { this.category = category; }
+
+  public Set<Tag> getTags() { return tags; }
+  public void setTags(Set<Tag> tags) { this.tags = tags; }
 }
